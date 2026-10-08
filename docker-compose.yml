@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-expenseguard}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-replace-me}
+      POSTGRES_DB: ${POSTGRES_DB:-ExpenseGuard}
+    ports:
+      - "5432:5432"
+    volumes:
+      - expenseguard-pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-expenseguard}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./backend/ExpenseGuard.Api
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: Host=postgres;Database=${POSTGRES_DB:-ExpenseGuard};Username=${POSTGRES_USER:-expenseguard};Password=${POSTGRES_PASSWORD:-replace-me}
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-replace-with-at-least-32-random-bytes!!}
+      Cors__Origins__0: ${CORS_ORIGIN:-http://localhost:5173}
+      LangGraph__BaseUrl: http://agents:8088
+    ports:
+      - "5000:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  agents:
+    build:
+      context: ./ai/expenseguard-agents
+      dockerfile: Dockerfile
+    environment:
+      EXPENSEGUARD_FAKE_MODE: "true"
+      EXPENSEGUARD_ASPNET_BASE_URL: http://api:8080
+      EXPENSEGUARD_POSTGRES_DSN: postgresql://${POSTGRES_USER:-expenseguard}:${POSTGRES_PASSWORD:-replace-me}@postgres:5432/${POSTGRES_DB:-ExpenseGuard}
+    ports:
+      - "8088:8088"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      api:
+        condition: service_started
+
+volumes:
+  expenseguard-pg:

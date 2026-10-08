@@ -1,0 +1,23 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [ main, integration/testing ]
+  pull_request:
+    branches: [ main, integration/testing ]
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Flutter
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test

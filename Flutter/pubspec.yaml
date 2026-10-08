@@ -1,0 +1,26 @@
+name: reimbursement_budget
+description: ReimbursementBudget Flutter - Employee Mobile App for SE3090
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0
+  flutter_riverpod: 2.6.1
+  flutter_secure_storage: ^9.2.4
+  intl: ^0.19.0
+  go_router: ^14.0.0
+  image_picker: ^1.1.2
+  file_picker: ^8.1.7
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true

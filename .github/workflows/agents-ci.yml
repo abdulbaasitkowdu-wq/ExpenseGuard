@@ -1,0 +1,24 @@
+name: Agents CI
+
+on:
+  push:
+    branches: [ main, integration/testing ]
+  pull_request:
+    branches: [ main, integration/testing ]
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ai/expenseguard-agents
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[test]"
+      - run: pytest
+        env:
+          EXPENSEGUARD_FAKE_MODE: "true"

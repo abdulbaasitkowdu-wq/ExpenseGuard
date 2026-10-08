@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ExpenseGuard.Api/ExpenseGuard.Api.csproj" />
+  <Project Path="ExpenseGuard.Api.Tests/ExpenseGuard.Api.Tests.csproj" />
+</Solution>

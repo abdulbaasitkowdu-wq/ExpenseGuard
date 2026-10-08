@@ -1,0 +1,25 @@
+name: React CI
+
+on:
+  push:
+    branches: [ main, integration/testing ]
+  pull_request:
+    branches: [ main, integration/testing ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: React
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: React/package-lock.json
+      - run: npm ci
+      - run: npm test -- --run
+      - run: npm run build
